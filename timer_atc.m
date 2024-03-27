@@ -1,0 +1,1 @@
+massTiltWing_sand(i) = sizingTradeStudy(range(i),load_mass);

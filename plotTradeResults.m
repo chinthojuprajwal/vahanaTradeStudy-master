@@ -7,8 +7,8 @@ function [] = plotTradeResults()
 km2m = 1000;
 
 %% Load trade study data
-load('tradeStudyResults.mat');
-
+%load('tradeStudyResults.mat');
+load('atc_plot.mat');
 %% Save data in usable format
 ranges = ranges';
 mH = nan(length(ranges),1); % Helicopter mass
@@ -36,32 +36,32 @@ CBreakdownT = nan(length(ranges),6); % Tilt-wing cost breakdown
 
 % Loop through results and pack vectors
 for i = 1:length(ranges)
-    if length(CHelicopter) >= i
-        if ~isempty(massHelicopter(i).m) 
-            mH(i) = massHelicopter(i).m; 
-        end
-        if ~isempty(massHelicopter(i).battery)
-            mBatH(i) = massHelicopter(i).battery; 
-        end
-        vH(i) = VHelicopter(i);
-        bH(i) = 2 * rPropHelicopter(i);
-        lH(i) = 2.25 * rPropHelicopter(i);
-        rH(i) = rPropHelicopter(i);
-        pHH(i) = hoverOutputHelicopter(i).PBattery * 1e-3;
-        pCH(i) = cruiseOutputHelicopter(i).PBattery * 1e-3;
-        mBreakdownH(i,:) = 1.1*[massHelicopter(i).payload, massHelicopter(i).avionics + ...
-            massHelicopter(i).servos + massHelicopter(i).wire, ...
-            massHelicopter(i).seat + massHelicopter(i).brs, ...
-            massHelicopter(i).battery, massHelicopter(i).motors + massHelicopter(i).transmission, ...
-             massHelicopter(i).structural];
-        CBreakdownH(i,:) = [CHelicopter(i).acquisitionCostPerFlight,...
-            CHelicopter(i).insuranceCostPerFlight,...
-            CHelicopter(i).facilityCostPerFlight,...
-            CHelicopter(i).energyCostPerFlight,...
-            CHelicopter(i).batteryReplCostPerFlight + CHelicopter(i).motorReplCostPerFlight + CHelicopter(i).servoReplCostPerFlight, ...
-            CHelicopter(i).laborCostPerFlight];
-        if ~isempty(CHelicopter(i).costPerFlight); cH(i) = CHelicopter(i).costPerFlight; end;
-    end
+%     if length(CHelicopter) >= i
+%         if ~isempty(massHelicopter(i).m) 
+%             mH(i) = massHelicopter(i).m; 
+%         end
+%         if ~isempty(massHelicopter(i).battery)
+%             mBatH(i) = massHelicopter(i).battery; 
+%         end
+%         vH(i) = VHelicopter(i);
+%         bH(i) = 2 * rPropHelicopter(i);
+%         lH(i) = 2.25 * rPropHelicopter(i);
+%         rH(i) = rPropHelicopter(i);
+%         pHH(i) = hoverOutputHelicopter(i).PBattery * 1e-3;
+%         pCH(i) = cruiseOutputHelicopter(i).PBattery * 1e-3;
+%         mBreakdownH(i,:) = 1.1*[massHelicopter(i).payload, massHelicopter(i).avionics + ...
+%             massHelicopter(i).servos + massHelicopter(i).wire, ...
+%             massHelicopter(i).seat + massHelicopter(i).brs, ...
+%             massHelicopter(i).battery, massHelicopter(i).motors + massHelicopter(i).transmission, ...
+%              massHelicopter(i).structural];
+%         CBreakdownH(i,:) = [CHelicopter(i).acquisitionCostPerFlight,...
+%             CHelicopter(i).insuranceCostPerFlight,...
+%             CHelicopter(i).facilityCostPerFlight,...
+%             CHelicopter(i).energyCostPerFlight,...
+%             CHelicopter(i).batteryReplCostPerFlight + CHelicopter(i).motorReplCostPerFlight + CHelicopter(i).servoReplCostPerFlight, ...
+%             CHelicopter(i).laborCostPerFlight];
+%         if ~isempty(CHelicopter(i).costPerFlight); cH(i) = CHelicopter(i).costPerFlight; end;
+%     end
     if length(CTiltWing) >= i
         if ~isempty(massTiltWing(i).m)
             mT(i) = massTiltWing(i).m; 
@@ -78,7 +78,7 @@ for i = 1:length(ranges)
         mBreakdownT(i,:) = 1.1*[massTiltWing(i).payload, massTiltWing(i).avionics + ...
             massTiltWing(i).servos + massTiltWing(i).wire + massTiltWing(i).tilt, ...
             massTiltWing(i).seat + massTiltWing(i).brs, ...
-            massTiltWing(i).battery, massTiltWing(i).motors, ...
+            massTiltWing(i).battery, massTiltWing(i).motors+massTiltWing(i).gearbox, ...
              massTiltWing(i).structural];
          CBreakdownT(i,:) = [CTiltWing(i).acquisitionCostPerFlight,...
             CTiltWing(i).insuranceCostPerFlight,...
@@ -94,12 +94,12 @@ end
 
 %% DOC per flight (dot area represents mass)
 figuren('Cost vs. Range'); clf; hold on;
-plot(ranges/km2m,cH,'b-')
+% plot(ranges/km2m,cH,'b-')
 plot(ranges/km2m,cT,'r-')
 for i = 1:length(ranges)
-    if ~isnan(cH(i))
-        plot(ranges(i)/km2m,cH(i),'b.','MarkerSize',1.5*sqrt(mH(i)))
-    end
+%     if ~isnan(cH(i))
+%         plot(ranges(i)/km2m,cH(i),'b.','MarkerSize',1.5*sqrt(mH(i)))
+%     end
     if ~isnan(cT(i))
         plot(ranges(i)/km2m,cT(i),'r.','MarkerSize',1.5*sqrt(mT(i)))
     end
@@ -127,9 +127,9 @@ figuren('Cost per km vs. Range'); clf; hold on;
 plot(ranges/km2m,cH./(ranges/km2m),'b-')
 plot(ranges/km2m,cT./(ranges/km2m),'r-')
 for i = 1:length(ranges)
-    if ~isnan(cH(i))
-        plot(ranges(i)/km2m,cH(i)/(ranges(i)/km2m),'b.','MarkerSize',1.5*sqrt(mH(i)))
-    end
+%     if ~isnan(cH(i))
+%         plot(ranges(i)/km2m,cH(i)/(ranges(i)/km2m),'b.','MarkerSize',1.5*sqrt(mH(i)))
+%     end
     if ~isnan(cT(i))
         plot(ranges(i)/km2m,cT(i)/(ranges(i)/km2m),'r.','MarkerSize',1.5*sqrt(mT(i)))
     end
@@ -305,25 +305,24 @@ saveas(gcf,'./powerAndLoading','png');
 
 %% Mass Breakdown
 figuren('Mass Breakdown'); clf;
-subplot(2,1,1); hold on;
-bar(ranges/km2m, mBreakdownH,'stacked')
-xlim([0,210])
-ylim([0,2000])
-grid on
-xlabel('Range [km]')
-ylabel('Mass [kg]')
-title('Electric Helicopter')
-legend('Payload','Avionics','Misc','Battery','Motors+Transmission','Structure','Location','Best')
+% subplot(2,1,1); hold on;
+% bar(ranges/km2m, mBreakdownH,'stacked')
+% xlim([0,210])
+% ylim([0,2000])
+% grid on
+% xlabel('Range [km]')
+% ylabel('Mass [kg]')
+% title('Electric Helicopter')
+% legend('Payload','Avionics','Misc','Battery','Motors+Transmission','Structure','Location','Best')
 
-subplot(2,1,2); hold on;
+
 bar(ranges/km2m, mBreakdownT, 'stacked')
-xlim([0,210])
-ylim([0,2000])
 grid on
 xlabel('Range [km]')
 ylabel('Mass [kg]')
 title('Electric Tilt-Wing Multirotor')
 saveas(gcf,'./massBreakdown','png');
+legend('Payload','Avionics','Misc','Battery','Motors+Transmission','Structure','Location','Best')
 
 
 %% Cost Breakdown
@@ -338,14 +337,13 @@ ylabel('DOC [$/km]')
 title('Electric Helicopter')
 legend('Aquisition','Insurance','Facility','Energy','Part Replacement','Labor','Location','Best')
 
-subplot(2,1,2); hold on;
 bar(ranges/km2m, CBreakdownT ./ (repmat(ranges,1,6)/km2m), 'stacked')
-xlim([0,210])
-ylim([0,3.5])
+
 grid on
 xlabel('Range [km]')
 ylabel('DOC [$/km]')
 title('Electric Tilt-Wing Multirotor')
 saveas(gcf,'./costBreakdown','png');
+legend('Aquisition','Insurance','Facility','Energy','Part Replacement','Labor','Location','Best')
 
 

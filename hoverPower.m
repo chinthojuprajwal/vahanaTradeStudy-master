@@ -11,7 +11,7 @@
 %
 
 
-function [hoverOutput] = hoverPower(vehicle,rProp,W,cruiseOutput)
+function [hoverOutput] = hoverPower(vehicle,rProp,W,cruiseOutput,rpm,eta_motor,m_gb,V)
 
 % Altitude, compute atmospheric properties
 rho = 1.225;
@@ -26,7 +26,7 @@ if strcmpi(vehicle,'tiltwing')
     hoverOutput.nProp = 8; % Number of props / motors
     hoverOutput.ToverW = 1.7; % Max required T/W to handle rotor out w/ manuever margin
     hoverOutput.k = 1.15; % Effective disk area factor (see "Helicopter Theory" Section 2-6.2)
-    hoverOutput.etaMotor = 0.85; % Assumed electric motor efficiency
+    hoverOutput.etaMotor = eta_motor; % Assumed electric motor efficiency
     
     % Tip Mach number constraint for noise reasons at max thrust condition
     hoverOutput.MTip = 0.65;
@@ -36,8 +36,8 @@ if strcmpi(vehicle,'tiltwing')
     hoverOutput.omega = hoverOutput.Vtip / rProp;
     
     % Thrust per prop / rotor at hover
-    hoverOutput.THover = W / hoverOutput.nProp;
-    
+%     hoverOutput.THover = sqrt(W*W+(V*W/1800)*(V*W/1800)) / hoverOutput.nProp;
+    hoverOutput.THover = sqrt(W*W) / hoverOutput.nProp;
     % Compute thrust coefficient
     hoverOutput.Ct = hoverOutput.THover / (rho * pi * rProp^2 * hoverOutput.Vtip^2);
     
@@ -47,8 +47,13 @@ if strcmpi(vehicle,'tiltwing')
     % Hover Power
     hoverOutput.PHover = hoverOutput.nProp * hoverOutput.THover * ...
         (hoverOutput.k .* sqrt(hoverOutput.THover ./ (2 * rho * pi * rProp.^2)) + ...
-        hoverOutput.sigma * hoverOutput.Cd0 / 8 * (hoverOutput.Vtip)^3 ./ (hoverOutput.THover ./ (rho * pi * rProp.^2)));
-    hoverOutput.FOM = hoverOutput.nProp * hoverOutput.THover * sqrt(hoverOutput.THover ./ (2 * rho * pi * rProp.^2)) / hoverOutput.PHover;
+        hoverOutput.sigma * hoverOutput.Cd0 / 8 * (hoverOutput.Vtip)^3 ./...
+        (hoverOutput.THover ./ (rho * pi * rProp.^2)));
+    
+    hoverOutput.PHover=bem_power(rProp,hoverOutput.Vtip,hoverOutput.Ct);
+    
+    hoverOutput.FOM = hoverOutput.nProp * hoverOutput.THover * ...
+        sqrt(hoverOutput.THover ./ (2 * rho * pi * rProp.^2)) / hoverOutput.PHover;
     
     % Battery power
     hoverOutput.PBattery = hoverOutput.PHover / hoverOutput.etaMotor;
@@ -60,8 +65,9 @@ if strcmpi(vehicle,'tiltwing')
     % Note: Tilt-wing multirotor increases thrust by increasing RPM at constant collective
     hoverOutput.PMax = hoverOutput.nProp * hoverOutput.TMax * ...
         (hoverOutput.k .* sqrt(hoverOutput.TMax ./ (2 * rho * pi * rProp.^2)) + ...
-        hoverOutput.sigma * hoverOutput.Cd0 / 8 * (hoverOutput.Vtip * sqrt(hoverOutput.ToverW))^3 ./ (hoverOutput.TMax ./ (rho * pi * rProp.^2)));
-    
+        hoverOutput.sigma * hoverOutput.Cd0 / 8 * (hoverOutput.Vtip * ...
+        sqrt(hoverOutput.ToverW))^3 ./ (hoverOutput.TMax ./ (rho * pi * rProp.^2)));
+   
     % Max battery power
     hoverOutput.PMaxBattery = hoverOutput.PMax / hoverOutput.etaMotor;
     
