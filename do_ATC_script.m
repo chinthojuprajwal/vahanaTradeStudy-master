@@ -2,7 +2,6 @@ function res = do_ATC_script(atc,params)
 %DO_ATC Summary of this function goes here
 figure(100);
 ax=gca;
-atc.fcall=0;
 clf(ax);
 atc=init_ATC(atc);
 atc.fcon_start=10^50;
@@ -23,12 +22,11 @@ while atc.f_con>atc.tol
     for i=1:atc.bsize
         
         %optimise the obj and penality
-        [atc.x_temp,atc.feval,atc.xflag,op]=fmincon(@fun,...
+        [atc.x_temp,atc.feval,atc.xflag]=fmincon(@fun,...
             atc.red_mat{i}*atc.x0(:,i),[],[],[],[],...
             atc.red_mat{i}*atc.lb,atc.red_mat{i}*atc.ub,@cons...
             ,options,i,atc.v,atc.w,atc.cp_vec{i}...
             ,atc.var,atc.cp_mat,atc.red_mat,atc.vc,atc.wc,atc,params);
-        atc.fcall=atc.fcall+op.funcCount;
         %update initial point
         atc.x0(:,i)=pinv(atc.red_mat{i})*atc.x_temp;
         %update local copy of design variables

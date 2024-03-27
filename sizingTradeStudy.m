@@ -23,7 +23,7 @@ ranges = range; % m
 rng('default');
 
 % Optimization options
-options = optimset('display','notify','Algorithm','interior-point','PlotFcns','optimplotfval','ScaleProblem','obj-and-constr','MaxIter',5e3,'MaxFunEvals',2e4,'FinDiffType','central');
+options = optimoptions('fmincon','Display','iter','MaxFunctionEvaluations',15000,'Algorithm','sqp','FiniteDifferenceType','central','ScaleProblem','obj-and-constr') ;% ,'PlotFcn','optimplotfvalconstr');
 
 % Number of random optimization restarts to try since there may be local minima
 nRestart = 0;
@@ -53,14 +53,14 @@ for i = 1:length(ranges)
     % Initial guess for first iteration, start with previous solution for
     % future iterations
     if i == 1
-        x0 = [8, 80, 290, 300, 650,1,1,6000,0.9,16];
+        x0 = [8, 80, 290, 300, 650,1,1,5000,0.9,16];
     else
         x0 = xT;
     end
     
     % Design variable bounds
-    lb = [0,10,50,20,100,1,1,2600,0.01,0]; % Min cruise at 1.3 * VStall
-    ub = [10, 100, 999, 999, 9999,100,30,8800,1,200];
+    lb = [0.001,10,50,20,100,1,1,2600,0.01,0.01]; % Min cruise at 1.3 * VStall
+    ub = [10, 100, 999, 999, 9999,300,30,8800,1,200];
     
     if exitflagT > 0 % Don't run if it hasn't converged at the previous speed
         

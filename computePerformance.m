@@ -56,29 +56,61 @@ f=C.costPerFlight;
 
 %% Constraints
 
-% Constraint on available energy (E is in kW-hr)
-c(1) = EReserve - mBattery * batteryEnergyDensity * dischargeDepthReserve / 1000;
 
-% Constraint on available motor power (kW)
-tip_mach=0.65;
-omega=tip_mach*340.294/rProp;
-rpm_rotor=omega*60/(2*pi);
+
+
+
+% Constraint on MTOW
+c(1) = mass.W - mtow * 9.8;
+
+
+
+% Battery sizing
+[EReserve,~,~,~,~] = reserveMission(vehicle,rProp,V,mtow*9.8,range,S,rpm,eta_motor,m_gb);
+c(2) = EReserve - mBattery * batteryEnergyDensity * dischargeDepthReserve / 1000;
+
+% %motor power density
+% c(4) = hoverOutput.PMax / 1000 - mMotors * motorPowerDensity;
+
+% motor sizing based on torque
 torq=0.74*(hoverOutput.PMax/8)/(rpm*2*pi/60);
 lb2kg = 0.453592;
-c(2) = 0.3928*(torq^0.8587)*lb2kg*8 - mMotors;
-% Constraint on MTOW
-c(3) = mass.W - mtow * 9.8;
-%c(4)=35-V;
+c(3) = 0.3928*(torq^0.8587)*lb2kg*8 - mMotors;
+
+
+
+% Constraint on tip speed
+% tip_mach=0.65;
+% omega=tip_mach*340.294/rProp;
+% rpm_max=omega*60/(2*pi);
+% c(4)=rpm-rpm_max;
+% c(4)=0;
+
+% Ereserve constraint
 ceq(1)=abs (EReserve-x(6));
 
-rho = 1.225;
-% Specify stall conditions
-VStall = 35; % m/s
-CLmax = 1.1; % Whole aircraft CL, section Clmax much higher
-ceq(2)=x(7)-((mtow*9.8) / (0.5 * rho * VStall^2 * CLmax));
-rpm=x(8);
-ceq(3)= x(9)-motor_eta(rpm);
-ceq(4)= x(10)-mass_gb(rpm,rProp,hoverOutput.PMax);
+
+
+        rho = 1.225;
+        % Specify stall conditions
+        VStall = 35; % m/s
+        CLmax = 1.1; % Whole aircraft CL, section Clmax much higher
+        ceq(2)=x(7)-((x(5)*9.8) / (0.5 * rho * VStall^2 * CLmax));
+        
+        
+        
+        
+        ceq(3)= x(9)-motor_eta(rpm);
+       
+     
+        
+
+        
+        
+        
+       ceq(4)= x(10)-mass_gb(rpm,rProp,hoverOutput.PMax);
+        
+        
 
 if strcmpi(vehicle,'helicopter')
     % Auto-rotation energy constraint => kinetic energy in blades has to be
