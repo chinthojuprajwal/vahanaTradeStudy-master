@@ -14,7 +14,7 @@
 %   cruiseOutput - Structure with computed cruise performance
 %
 
-function [E,t,hoverOutput,cruiseOutput] = simpleMission(vehicle,rProp,V,W,range)
+function [E,t,hoverOutput,cruiseOutput] = simpleMission(vehicle,rProp,V,W,range,S,rpm,eta_motor,m_gb)
 
 % Basic mission
 hoverTime = 180*numel(range); % sec to account for VTOL takeoff and climb, transition, transition, VTOL descent and landing
@@ -23,10 +23,10 @@ hoverTime = 180*numel(range); % sec to account for VTOL takeoff and climb, trans
 cruiseTime = sum(range) / V; % sec
 
 % Compute cruise performance
-cruiseOutput = cruisePower(vehicle,rProp,V,W);
+cruiseOutput = cruisePower(vehicle,rProp,V,W,S,rpm,eta_motor,m_gb);
 
 % Compute hover performance
-hoverOutput = hoverPower(vehicle,rProp,W,cruiseOutput);
+hoverOutput = hoverPower(vehicle,rProp,W,cruiseOutput,rpm,eta_motor,m_gb,V);
 
 % Compute total energy use (kW-hr)
 E = (hoverOutput.PBattery * hoverTime + cruiseOutput.PBattery * cruiseTime) * 2.77778e-7; % kW-hr

@@ -10,7 +10,7 @@
 %  cruiseOutputs - structure with cruise performance values
 %
 
-function [cruiseOutput] = cruisePower(vehicle,rProp,V,W)
+function [cruiseOutput] = cruisePower(vehicle,rProp,V,W,S,rpm,eta_motor,m_gb)
 
 % Altitude, compute atmospheric properties
 rho = 1.225;
@@ -29,8 +29,9 @@ if strcmpi(vehicle,'tiltwing')
     cruiseOutput.bRef = 6 * rProp + 1.2; % Rough distance between hubs of outermost props
     
     % Compute reference area (counting both wings)
-    cruiseOutput.SRef = W / (0.5 * rho * VStall^2 * CLmax);
-
+    %cruiseOutput.SRef = W / (0.5 * rho * VStall^2 * CLmax);
+    cruiseOutput.SRef = S;
+    
     % Compute reference chord (chord of each wing)
     cruiseOutput.cRef = 0.5 * cruiseOutput.SRef / cruiseOutput.bRef; 
         
@@ -38,7 +39,7 @@ if strcmpi(vehicle,'tiltwing')
     cruiseOutput.AR = cruiseOutput.bRef^2 / cruiseOutput.SRef;
     
     % Motor efficiency
-    cruiseOutput.etaMotor = 0.85;
+    cruiseOutput.etaMotor = eta_motor;
 
     % Wing profile drag coefficent
     cruiseOutput.Cd0Wing = 0.012;

@@ -14,7 +14,7 @@
 %   loiterOutput - Computed loiter performance
 %
 
-function [E,t,hoverOutput,cruiseOutput,loiterOutput] = reserveMission(vehicle,rProp,V,W,range)
+function [E,t,hoverOutput,cruiseOutput,loiterOutput] = reserveMission(vehicle,rProp,V,W,range,S,rpm,eta_motor,m_gb)
 
 % Reserve mission
 hoverTime = 180 * (numel(range)+1); % sec to account for VTOL takeoff and climb, transition, transition, VTOL descent and landing and repeated for diversion
@@ -26,10 +26,10 @@ cruiseTime = sum(range) / V; % sec
 loiterTime = 17 * 60; % 20 minute total reserve
 
 % Compute cruise performance
-cruiseOutput = cruisePower(vehicle,rProp,V,W);
+cruiseOutput = cruisePower(vehicle,rProp,V,W,S,rpm,eta_motor);
 
 % Compute hover performance
-hoverOutput = hoverPower(vehicle,rProp,W,cruiseOutput);
+hoverOutput = hoverPower(vehicle,rProp,W,cruiseOutput,rpm,eta_motor,m_gb,V);
 
 % Compute loiter performance
 loiterOutput = loiterPower(vehicle,rProp,V,W,cruiseOutput);

@@ -14,11 +14,11 @@
 %  mass - structure with component masses [kg] and maximum takeoff weight [N]
 
 
-function [mass] = configWeight(vehicle,rProp,mBattery,mMotors,mtow,hoverOutput,cruiseOutput,payload)
+function [mass] = configWeight(vehicle,rProp,mBattery,mMotors,mtow,hoverOutput,cruiseOutput,payload,m_gb)
 
 % Total payload mass
 mass.payload = payload;
-
+mass.gearbox=m_gb;
 % Fixed weight components between configs
 mass.seat = 15; % kg
 mass.avionics = 15; % kg, Flight computer, sensors, BMS, backup power battery
@@ -76,7 +76,7 @@ if strcmpi(vehicle,'tiltwing')
     % Total mass + 10% Fudge factor
     mass.m = 1.1 * (mass.payload + mass.seat + mass.avionics + mass.servos + ...
         mass.tilt + mass.structural +  ...
-        mass.battery + mass.motors + mass.wire + mass.brs);
+        mass.battery + mass.motors + mass.wire + mass.brs+mass.gearbox);
         
 elseif strcmpi(vehicle,'helicopter')
     
