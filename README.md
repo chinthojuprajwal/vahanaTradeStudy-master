@@ -7,7 +7,7 @@ This repository contains the Matlab source code and results corresponding to the
 
 Following are the design variables optimised in this study:
 
-![design variables](https://github.com/chinthojuprajwal/vahanaTradeStudy-master/blob/main/design_var.png)
+![design variables](design_var.png)
 
 The detailed study is published in AIAA Scitech 2024 and is available for access at DOI https://doi.org/10.2514/6.2024-2235
 The conference proceeding can also be downloaded from https://yonghoonlee.com/wp-content/uploads/2023/12/Chinthoju_2024_SciTech24_eVTOL.pdf
@@ -24,7 +24,7 @@ The computePerformance() method gives access to the entire model and outputs the
 ## How to run optimization
 
 Monolithic optimization
-[`sizingTradeStudy.m`](https://github.com/yonghoonlee/vahanaTradeStudy-master/blob/main/sizingTradeStudy.m)
+[`sizingTradeStudy.m`](sizingTradeStudy.m)
 
 ATC optimization
-[`EVTOL_ATC_Coordination.m`](https://github.com/yonghoonlee/vahanaTradeStudy-master/blob/main/EVTOL_ATC_Coordination.m)
+[`EVTOL_ATC_Coordination.m`](EVTOL_ATC_Coordination.m)
