@@ -19,3 +19,12 @@ This repository has two different optimisation formulation implementations. The 
 The second optimistation formulation is the ATC which can be performed by running the script EVTOL_ATC_coordination.
 
 The computePerformance() method gives access to the entire model and outputs the cost per flight and all the constraints given the design variable array. This can furthur be used to perform other optimisation studies.
+
+
+## How to run optimization
+
+Monolithic optimization
+[`sizingTradeStudy.m`](https://github.com/yonghoonlee/vahanaTradeStudy-master/blob/main/sizingTradeStudy.m)
+
+ATC optimization
+[`EVTOL_ATC_Coordination.m`](https://github.com/yonghoonlee/vahanaTradeStudy-master/blob/main/EVTOL_ATC_Coordination.m)
