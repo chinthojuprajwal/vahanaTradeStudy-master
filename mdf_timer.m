@@ -1,0 +1,1 @@
+[~,~] = sizingTradeStudy(50000,300);
